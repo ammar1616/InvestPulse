@@ -1,10 +1,12 @@
 const router = require('express').Router();
 
+const multerConfig = require("../configurations/image");
+
 const { authorize } = require('../middlewares/isAuth');
 
 const { add, getByUser, search, getAll, like, comment, getOne, deleteProject } = require('../controllers/project');
 
-router.post('/', authorize(['user', 'admin']), add);
+router.post('/', authorize(['user', 'admin']), multerConfig.postImage.single('image'), add);
 
 router.get('/search', authorize(['user', 'admin']), search);
 

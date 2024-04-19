@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const mongoose = require('mongoose')
 
 const Project = require('../models/project')
@@ -129,11 +132,16 @@ exports.delete = async (data) => {
         if (project.author.toString() !== user._id.toString() && user.role !== 'admin') {
             throw new Error('User cannot delete this project');
         }
+        if (project.image) {
+            clearImage(project.image);
+        }
         return await Project.findByIdAndDelete(data.projectId);
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
         return;
     }
 };
 
+const clearImage = filePath => {
+    fs.unlink(filePath, err => console.log(err));
+};

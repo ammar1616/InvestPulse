@@ -2,8 +2,10 @@ const projectService = require('../services/project')
 
 exports.add = async (req, res) => {
     try {
-        const { title, description, image } = req.body;
-        const data = { title, description, image, author: req.user._id };
+        const { title, description } = req.body;
+        const data = { title, description, author: req.user._id };
+        data.image = req.file.path.replace(/\\/g, '/');
+        console.log(req.file.originalname);
         const project = await projectService.create(data);
         if (!project) {
             return res.status(400).json({ error: 'Project creation failed' });
