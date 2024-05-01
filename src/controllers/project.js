@@ -2,10 +2,15 @@ const projectService = require('../services/project')
 
 exports.add = async (req, res) => {
     try {
-        const { title, description } = req.body;
-        const data = { title, description, author: req.user._id };
-        data.image = req.file.path.replace(/\\/g, '/');
-        console.log(req.file.originalname);
+        const { title, description, price } = req.body;
+        const data = { title, description, price, author: req.user._id };
+        // console.log(req.files);
+        if (req.files && req.files.image) {
+            data.image = req.files.image[0].path.replace(/\\/g, '/');
+        }
+        if (req.files && req.files.video) {
+            data.video = req.files.video[0].path.replace(/\\/g, '/');
+        }
         const project = await projectService.create(data);
         if (!project) {
             return res.status(400).json({ error: 'Project creation failed' });
@@ -114,3 +119,16 @@ exports.deleteProject = async (req, res) => {
     }
 };
 
+exports.sellProject = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const soldProject = await projectService.sellProject(projectId);
+        if (!soldProject) {
+            return res.status(400).json({ error: 'Project sale failed' });
+        }
+        res.status(200).json({ message: 'Project sold successfully', soldProject });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};

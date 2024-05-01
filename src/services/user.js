@@ -7,6 +7,7 @@ require('dotenv').config();
 
 exports.create = async (data) => {
     try {
+        console.log(data);
         const existingUser = await User.findOne({ email: data.email });
         if (existingUser) {
             throw new Error('User already exists');
@@ -49,4 +50,4 @@ exports.getUsers = async () => {
         console.log(error);
         return;
     }
-}
+};

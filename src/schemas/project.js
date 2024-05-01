@@ -12,6 +12,9 @@ const projectSchema = new mongoose.Schema({
     image: {
         type: String,
     },
+    video: {
+        type: String,
+    },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -20,6 +23,15 @@ const projectSchema = new mongoose.Schema({
     available: {
         type: Number,
         default: 100
+    },
+    status: {
+        type: String,
+        enum: ['available', 'sold'],
+        default: 'available'
+    },
+    price: {
+        type: Number,
+        required: true
     },
     likes: [
         {

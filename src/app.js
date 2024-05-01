@@ -1,10 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
 require('dotenv').config();
 
 const { connect } = require('./configurations/database');
 const app = express();
 app.use(bodyParser.json());
+
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(compression());
+app.use(cors());
 
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');

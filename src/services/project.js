@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+require('dotenv').config();
+
 const mongoose = require('mongoose')
 
 const Project = require('../models/project')
@@ -9,12 +11,18 @@ const userService = require('./user')
 
 exports.create = async (data) => {
     try {
-        const { title, description, image, author } = data;
+        const { title, description, price, image, video, author } = data;
         const existingProject = await Project.findOne({ title });
         if (existingProject) {
             throw new Error('Project already exists');
         }
-        const project = new Project({ title, description, image, author });
+        const project = new Project({ title, description, price, author });
+        if (image) {
+            project.image = image;
+        }
+        if (video) {
+            project.video = video;
+        }
         return await project.save();
     } catch (error) {
         console.log(error);
@@ -76,6 +84,9 @@ exports.likeProject = async (data) => {
         if (!project) {
             throw new Error('Project not found');
         }
+        if (project.status === 'sold') {
+            throw new Error('Project is already sold');
+        }
         if (project.author.toString() === user._id.toString()) {
             throw new Error('User cannot like their own project');
         }
@@ -85,11 +96,17 @@ exports.likeProject = async (data) => {
         if (data.percentage > project.available) {
             throw new Error("this percentage isn't available");
         }
+        const requiredCoins = ((data.percentage / 100) * project.price);
+        if (user.coins < requiredCoins) {
+            throw new Error('Insufficient coins');
+        }
         const existingLike = project.likes.find(like => like.user.toString() === user._id.toString());
         if (existingLike) {
             project.available += existingLike.percentage;
+            user.coins += ((existingLike.percentage / 100) * project.price);
             project.likes = project.likes.filter(like => like.user.toString() !== user._id.toString());
         } else {
+            user.coins -= requiredCoins;
             project.available -= data.percentage;
             project.likes.push({ user: user._id, percentage: data.percentage });
         }
@@ -111,6 +128,9 @@ exports.commentProject = async (data) => {
         if (!project) {
             throw new Error('Project not found');
         }
+        if (project.status === 'sold') {
+            throw new Error('Project is already sold');
+        }
         project.comments.push({ user: user._id, comment: data.comment });
         return await project.save();
     } catch (error) {
@@ -125,6 +145,9 @@ exports.delete = async (data) => {
         if (!project) {
             throw new Error('Project not found');
         }
+        if (project.status === 'sold') {
+            throw new Error('Project is already sold');
+        }
         const user = await userService.getUser(data.user);
         if (!user) {
             throw new Error('User not found');
@@ -133,7 +156,10 @@ exports.delete = async (data) => {
             throw new Error('User cannot delete this project');
         }
         if (project.image) {
-            clearImage(project.image);
+            clearMedia(project.image);
+        }
+        if (project.video) {
+            clearMedia(project.video);
         }
         return await Project.findByIdAndDelete(data.projectId);
     } catch (error) {
@@ -142,6 +168,30 @@ exports.delete = async (data) => {
     }
 };
 
-const clearImage = filePath => {
+exports.sellProject = async (projectId) => {
+    try {
+        const project = await this.searchProjects(projectId);
+        if (!project) {
+            throw new Error('Project not found');
+        }
+        if (project.available > 0) {
+            throw new Error('Project is not fully liked');
+        }
+        const user = await userService.getUser(project.author);
+        if (!user) {
+            throw new Error('Author not found anymore');
+        }
+        user.coins += project.price;
+        project.status = 'sold';
+        await user.save();
+        return await project.save();
+    }
+    catch (error) {
+        console.log(error);
+        return;
+    }
+};
+
+const clearMedia = filePath => {
     fs.unlink(filePath, err => console.log(err));
 };

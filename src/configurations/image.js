@@ -10,7 +10,7 @@ const createMulterInstance = (destination) => {
     });
 
     const filter = (req, file, callback) => {
-        if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+        if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg' || file.mimetype === 'video/mp4') {
             callback(null, true);
         } else {
             callback(null, false);
@@ -20,4 +20,4 @@ const createMulterInstance = (destination) => {
     return multer({ storage: storage, fileFilter: filter });
 };
 
-exports.postImage = createMulterInstance('public/images/projects');
+exports.postMedia = createMulterInstance('public/projects');
