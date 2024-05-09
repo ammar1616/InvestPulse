@@ -17,6 +17,7 @@ const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
 const projectRouter = require('./routes/project');
 
+app.use('/public', express.static('public'));
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/projects', projectRouter);
