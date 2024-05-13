@@ -6,6 +6,8 @@ exports.add = async (req, res) => {
         const data = { title, description, price, author: req.user._id };
         console.log("------files------");
         console.log(req.files);
+        console.log("------file------");
+        console.log(req.file);
         if (req.files && req.files.image) {
             data.image = req.files.image[0].path.replace(/\\/g, '/');
         }
