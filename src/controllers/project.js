@@ -4,8 +4,6 @@ exports.add = async (req, res) => {
     try {
         const { title, description, price } = req.body;
         const data = { title, description, price, author: req.user._id };
-        console.log("------data------");
-        console.log(req);
         console.log("------files------");
         console.log(req.files);
         if (req.files && req.files.image) {
