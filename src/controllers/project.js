@@ -14,6 +14,9 @@ exports.add = async (req, res) => {
         if (!project) {
             return res.status(400).json({ error: 'Project creation failed' });
         }
+        const user = await userService.getUser(req.user._id);
+        user.projects.push(project._id);
+        await user.save();
         res.status(200).json({ message: 'Project created successfully', project });
     } catch (error) {
         console.log(error);
