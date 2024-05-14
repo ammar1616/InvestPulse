@@ -110,6 +110,9 @@ exports.likeProject = async (data) => {
             project.available -= data.percentage;
             project.likes.push({ user: user._id, percentage: data.percentage });
         }
+        if (project.available === 0) {
+            project.status = 'sold';
+        }
         await user.save();
         return await project.save();
     } catch (error) {
@@ -152,8 +155,8 @@ exports.delete = async (data) => {
         if (!user) {
             throw new Error('User not found');
         }
-        if (project.author.toString() !== user._id.toString() && user.role !== 'admin') {
-            throw new Error('User cannot delete this project');
+        if (project.author.toString() !== user._id.toString()) {
+            throw new Error('User cannot delete other user projects');
         }
         if (project.image) {
             clearMedia(project.image);
@@ -168,29 +171,18 @@ exports.delete = async (data) => {
     }
 };
 
-exports.sellProject = async (projectId) => {
+exports.status = async (status) => {
     try {
-        const project = await this.searchProjects(projectId);
-        if (!project) {
-            throw new Error('Project not found');
+        if (!status) {
+            return await Project.find({});
         }
-        if (project.available > 0) {
-            throw new Error('Project is not fully liked');
-        }
-        const user = await userService.getUser(project.author);
-        if (!user) {
-            throw new Error('Author not found anymore');
-        }
-        user.coins += project.price;
-        project.status = 'sold';
-        await user.save();
-        return await project.save();
-    }
-    catch (error) {
+        return await Project.find({ status });
+    } catch (error) {
         console.log(error);
         return;
     }
 };
+
 
 const clearMedia = filePath => {
     fs.unlink(filePath, err => console.log(err));

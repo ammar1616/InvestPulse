@@ -4,10 +4,6 @@ exports.add = async (req, res) => {
     try {
         const { title, description, price } = req.body;
         const data = { title, description, price, author: req.user._id };
-        console.log("------files------");
-        console.log(req.files);
-        console.log("------file------");
-        console.log(req.file);
         if (req.files && req.files.image) {
             data.image = req.files.image[0].path.replace(/\\/g, '/');
         }
@@ -122,16 +118,17 @@ exports.deleteProject = async (req, res) => {
     }
 };
 
-exports.sellProject = async (req, res) => {
+exports.status = async (req, res) => {
     try {
-        const { projectId } = req.params;
-        const soldProject = await projectService.sellProject(projectId);
-        if (!soldProject) {
-            return res.status(400).json({ error: 'Project sale failed' });
+        const { status } = req.params;
+        console.log(status);
+        const projects = await projectService.status(status);
+        if (!projects) {
+            return res.status(400).json({ error: 'No projects found' });
         }
-        res.status(200).json({ message: 'Project sold successfully', soldProject });
+        res.status(200).json({ message: 'Projects retrieved successfully', projects });
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Internal server error' });
     }
-};
+}
