@@ -50,3 +50,18 @@ exports.getUsers = async () => {
         return;
     }
 };
+
+exports.chargeCoins = async (data) => {
+    try {
+        const user = await this.getUser(data.userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        user.coins += data.amount;
+        return await user.save();
+    }
+    catch (error) {
+        console.log(error);
+        return;
+    }
+};
