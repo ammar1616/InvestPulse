@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
+const axios = require('axios');
 require('dotenv').config();
 
 const { connect } = require('./configurations/database');
@@ -25,6 +26,17 @@ app.use('/projects', projectRouter);
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to InvestPulse!' });
 });
+
+const sendRequest = async () => {
+    try {
+        const response = await axios.get('https://investpulse.onrender.com/');
+    } catch (error) {
+        console.error(`Request failed: ${error.message}`);
+    }
+};
+
+const interval = 14 * 60 * 1000;
+setInterval(sendRequest, interval);
 
 connect().then(() => {
     app.listen(process.env.PORT, async () => {
