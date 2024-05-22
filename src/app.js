@@ -27,17 +27,6 @@ app.get('/', (req, res) => {
     res.json({ message: 'Welcome to InvestPulse!' });
 });
 
-const sendRequest = async () => {
-    try {
-        const response = await axios.get('https://investpulse.onrender.com/');
-    } catch (error) {
-        console.error(`Request failed: ${error.message}`);
-    }
-};
-
-const interval = 14 * 60 * 1000;
-setInterval(sendRequest, interval);
-
 connect().then(() => {
     app.listen(process.env.PORT, async () => {
         console.log(`Server is running on port ${process.env.PORT}`);
