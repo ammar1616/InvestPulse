@@ -11,18 +11,28 @@ const userService = require('./user')
 
 exports.create = async (data) => {
     try {
-        const { title, description, price, image, video, author } = data;
+        const { title, description, price, media, author } = data;
         const existingProject = await Project.findOne({ title });
         if (existingProject) {
             throw new Error('Project already exists');
         }
         const project = new Project({ title, description, price, author });
-        if (image) {
-            project.image = image;
+        if (media) {
+            if (Array.isArray(media)) {
+                if (media.length > 0) {
+                    project.image = media[0];
+                }
+                if (media.length > 1) {
+                    project.video = media[1];
+                }
+            }
         }
-        if (video) {
-            project.video = video;
-        }
+        // if (image) {
+        //     project.image = image;
+        // }
+        // if (video) {
+        //     project.video = video;
+        // }
         return await project.save();
     } catch (error) {
         console.log(error);

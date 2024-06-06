@@ -5,8 +5,9 @@ const multerConfig = require("../configurations/image");
 const { authorize } = require('../middlewares/isAuth');
 
 const { add, getByUser, search, getAll, like, comment, getOne, deleteProject, status } = require('../controllers/project');
+const { postMedia } = require('../middlewares/uploadmedia');
 
-router.post('/', authorize(['user', 'admin']), multerConfig.postMedia.fields([{ name: 'image' }, { name: 'video' }]), add);
+router.post('/', authorize(['user', 'admin']), postMedia, add);
 
 router.get('/status/:status', authorize(['user', 'admin']), status);
 
