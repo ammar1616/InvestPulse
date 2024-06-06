@@ -17,22 +17,37 @@ exports.create = async (data) => {
             throw new Error('Project already exists');
         }
         const project = new Project({ title, description, price, author });
+
         if (media) {
+            let image = '';
+            let video = '';
+
             if (Array.isArray(media)) {
-                if (media.length > 0) {
-                    project.image = media[0];
-                }
-                if (media.length > 1) {
-                    project.video = media[1];
+                media.forEach(url => {
+                    const extension = url.split('.').pop().toLowerCase();
+                    if (['jpeg', 'jpg', 'png', 'gif'].includes(extension)) {
+                        if (!image) {
+                            image = url;
+                        }
+                    } else if (['mp4', 'avi', 'mkv'].includes(extension)) {
+                        if (!video) {
+                            video = url;
+                        }
+                    }
+                });
+            } else {
+                // Handle the case where media is a single string
+                const extension = media.split('.').pop().toLowerCase();
+                if (['jpeg', 'jpg', 'png', 'gif'].includes(extension)) {
+                    image = media;
+                } else if (['mp4', 'avi', 'mkv'].includes(extension)) {
+                    video = media;
                 }
             }
+
+            project.image = image;
+            project.video = video;
         }
-        // if (image) {
-        //     project.image = image;
-        // }
-        // if (video) {
-        //     project.video = video;
-        // }
         return await project.save();
     } catch (error) {
         console.log(error);

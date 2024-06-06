@@ -8,12 +8,6 @@ exports.add = async (req, res) => {
         if (req.body.media) {
             data.media = req.body.media;
         }
-        // if (req.files && req.files.image) {
-        //     data.image = req.files.image[0].path.replace(/\\/g, '/');
-        // }
-        // if (req.files && req.files.video) {
-        //     data.video = req.files.video[0].path.replace(/\\/g, '/');
-        // }
         const project = await projectService.create(data);
         if (!project) {
             return res.status(400).json({ error: 'Project creation failed' });
