@@ -127,14 +127,13 @@ exports.likeProject = async (data) => {
         }
         const existingLike = project.likes.find(like => like.user.toString() === user._id.toString());
         if (existingLike) {
-            project.available += existingLike.percentage;
-            user.coins += ((existingLike.percentage / 100) * project.price);
-            project.likes = project.likes.filter(like => like.user.toString() !== user._id.toString());
-        } else {
+            existingLike.percentage += data.percentage;
             user.coins -= requiredCoins;
-            project.available -= data.percentage;
+        } else {
             project.likes.push({ user: user._id, percentage: data.percentage });
+            user.coins -= requiredCoins;
         }
+        project.available -= data.percentage;
         if (project.available === 0) {
             project.status = 'sold';
         }
