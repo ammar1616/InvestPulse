@@ -18,7 +18,7 @@ exports.create = async (data) => {
         return await user.save();
     } catch (error) {
         console.log(error);
-        return;
+        return { error: error.message };
     }
 }
 
@@ -35,7 +35,7 @@ exports.getUser = async (identifier) => {
                 ]
             });
         }
-        return user;
+        return { error: error.message };
     } catch (error) {
         console.log(error);
         return;
@@ -47,7 +47,7 @@ exports.getUsers = async () => {
         return await User.find({});
     } catch (error) {
         console.log(error);
-        return;
+        return { error: error.message };
     }
 };
 
@@ -62,6 +62,6 @@ exports.chargeCoins = async (data) => {
     }
     catch (error) {
         console.log(error);
-        return;
+        return { error: error.message };
     }
 };

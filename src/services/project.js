@@ -51,7 +51,7 @@ exports.create = async (data) => {
         return await project.save();
     } catch (error) {
         console.log(error);
-        return;
+        return { error: error.message };
     }
 };
 
@@ -64,7 +64,7 @@ exports.getByUser = async (userId) => {
         return await Project.find({ author: user._id });
     } catch (error) {
         console.log(error);
-        return;
+        return { error: error.message };
     }
 };
 
@@ -84,7 +84,7 @@ exports.searchProjects = async (identifier) => {
         return projects;
     } catch (error) {
         console.log(error);
-        return;
+        return { error: error.message };
     }
 };
 
@@ -94,7 +94,7 @@ exports.getAll = async () => {
         return await Project.find({});
     } catch (error) {
         console.log(error);
-        return;
+        return { error: error.message };
     }
 };
 
@@ -141,7 +141,7 @@ exports.likeProject = async (data) => {
         return await project.save();
     } catch (error) {
         console.log(error);
-        return;
+        return { error: error.message };
     }
 };
 
@@ -162,7 +162,7 @@ exports.commentProject = async (data) => {
         return await project.save();
     } catch (error) {
         console.log(error);
-        return;
+        return { error: error.message };
     }
 };
 
@@ -191,7 +191,7 @@ exports.delete = async (data) => {
         return await Project.findByIdAndDelete(data.projectId);
     } catch (error) {
         console.log(error);
-        return;
+        return { error: error.message };
     }
 };
 
@@ -203,7 +203,7 @@ exports.status = async (status) => {
         return await Project.find({ status });
     } catch (error) {
         console.log(error);
-        return;
+        return { error: error.message };
     }
 };
 
