@@ -122,7 +122,6 @@ exports.deleteProject = async (req, res) => {
 exports.status = async (req, res) => {
     try {
         const { status } = req.params;
-        console.log(status);
         const projects = await projectService.status(status);
         if (!projects) {
             return res.status(400).json({ error: 'No projects found' });

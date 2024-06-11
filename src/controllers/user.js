@@ -29,7 +29,6 @@ exports.getUsers = async (req, res) => {
 
 exports.chargeCoins = async (req, res) => {
     try {
-        console.log(req.user);
         const { amount } = req.body;
         const userId = req.user._id;
         const userData = { amount, userId };
